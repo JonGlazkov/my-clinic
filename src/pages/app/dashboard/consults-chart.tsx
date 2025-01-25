@@ -24,34 +24,41 @@ import {
 } from '@/components/ui/chart'
 
 const data = [
-  { date: '10/12', revenue: 1200 },
-  { date: '11/12', revenue: 800 },
-  { date: '12/12', revenue: 900 },
-  { date: '13/12', revenue: 400 },
-  { date: '14/12', revenue: 2300 },
-  { date: '15/12', revenue: 8400 },
-  { date: '16/12', revenue: 530 },
+  { month: 'Janeiro', monthlyConsults: 100 },
+  { month: 'Fevereiro', monthlyConsults: 200 },
+  { month: 'Março', monthlyConsults: 300 },
+  { month: 'Abril', monthlyConsults: 250 },
+  { month: 'Maio', monthlyConsults: 350 },
+  { month: 'Junho', monthlyConsults: 700 },
+  { month: 'Julho', monthlyConsults: 320 },
+  { month: 'Agosto', monthlyConsults: 250 },
+  { month: 'Setembro', monthlyConsults: 400 },
+  { month: 'Outubro', monthlyConsults: 580 },
+  { month: 'Novembro', monthlyConsults: 730 },
+  { month: 'Dezembro', monthlyConsults: 900 },
 ]
 
 const chartConfig = {
-  revenue: {
-    label: 'Receita',
+  monthlyConsults: {
+    label: 'Consultas',
     color: 'hsl(var(--chart-1))',
   },
 } satisfies ChartConfig
 
-export function RevenueChart() {
+export function ConsultsChart() {
   return (
     <Card className="col-span-6">
       <CardHeader className="flex-row items-center justify-between pb-8">
         <div className="space-y-1">
           <CardTitle className="text-base font-medium">
-            Receita no período de{' '}
+            Consultas do Periodo de{' '}
             <span className="font-semibold text-primary">
               {new Date().getFullYear()}
             </span>
           </CardTitle>
-          <CardDescription>Receita diária no período</CardDescription>
+          <CardDescription>
+            Consultas realizadas mensalmente no período
+          </CardDescription>
         </div>
         <LineChartIcon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
@@ -59,46 +66,31 @@ export function RevenueChart() {
         <ResponsiveContainer width="100%" height={260}>
           <ChartContainer config={chartConfig}>
             <LineChart accessibilityLayer data={data} style={{ fontSize: 12 }}>
-              <XAxis dataKey="date" tickLine={false} axisLine={false} dy={16} />
+              <XAxis
+                dataKey="month"
+                tickLine={false}
+                axisLine={false}
+                dy={12}
+              />
 
               <YAxis
+                dataKey="monthlyConsults"
                 stroke="#888"
                 axisLine={false}
                 tickLine={false}
-                width={80}
-                tickFormatter={(value: number) =>
-                  value.toLocaleString('pt-BR', {
-                    style: 'currency',
-                    currency: 'BRL',
-                  })
-                }
+                width={40}
               />
               <CartesianGrid vertical={false} className="stroke-muted" />
               <ChartTooltip
                 cursor
                 content={<ChartTooltipContent hideLabel />}
-                payload={[{ name: 'Receita', color: colors.violet['500'] }]}
-                formatter={(value, name) => (
-                  <>
-                    <div className="h-2.5 w-2.5 shrink-0 rounded-[2px] bg-violet-500" />
-                    <span key="name" className="text-muted-foreground">
-                      {chartConfig[name as keyof typeof chartConfig]?.label ||
-                        name}
-                    </span>
-                    <span key="value" className="font-medium">
-                      {value.toLocaleString('pt-BR', {
-                        style: 'currency',
-                        currency: 'BRL',
-                      })}
-                    </span>
-                  </>
-                )}
+                payload={[{ name: 'Consulta', color: colors.emerald['500'] }]}
               />
               <Line
                 type="linear"
                 strokeWidth={2}
-                dataKey="revenue"
-                stroke={colors.violet['500']}
+                dataKey="monthlyConsults"
+                stroke={colors.emerald['500']}
               />
             </LineChart>
           </ChartContainer>
