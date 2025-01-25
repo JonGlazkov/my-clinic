@@ -3,6 +3,7 @@ import './index.css'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { Helmet, HelmetProvider } from 'react-helmet-async'
 import { RouterProvider } from 'react-router-dom'
+import { Toaster as SonnerToaster } from 'sonner'
 
 import { ThemeProvider } from './components/theme/theme-provider'
 import { Toaster } from './components/ui/toaster'
@@ -14,6 +15,7 @@ export function App() {
     <HelmetProvider>
       <ThemeProvider storageKey="my-clinic-theme" defaultTheme="dark">
         <Helmet titleTemplate="%s | xon.clinic" />
+        <SonnerToaster richColors />
         <Toaster />
         <QueryClientProvider client={queryClient}>
           <RouterProvider router={router} />

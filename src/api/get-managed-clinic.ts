@@ -1,6 +1,6 @@
 import { api } from '@/lib/axios'
 
-interface GetManagedRestaurantResponse {
+export interface GetManagedClinicResponse {
   id: string
   name: string
   createdAt: Date | null
@@ -9,8 +9,8 @@ interface GetManagedRestaurantResponse {
   managerId: string | null
 }
 
-export async function getManagedRestaurant() {
-  const { data } = await api.get<GetManagedRestaurantResponse>(
+export async function getManagedClinic() {
+  const { data } = await api.get<GetManagedClinicResponse>(
     '/managed-restaurant', // change when the API is updated
   )
 
