@@ -1,8 +1,10 @@
+import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
 import { Link, useNavigate } from 'react-router-dom'
 import { z } from 'zod'
 
+import { registerClinic } from '@/api/register-clinic'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -27,37 +29,47 @@ export function SignUp() {
     formState: { isSubmitting },
   } = useForm<SignUpForm>()
 
-  const handleSignUp = async (data: SignUpForm) => {
-    console.log(data)
+  const { mutateAsync: registerClinicFn } = useMutation({
+    mutationFn: registerClinic,
+  })
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-      .then(() => {
-        toast({
-          title: 'Clínica cadastrada com sucesso',
-          // description: 'Cheque seu e-mail para acessar o painel',
-          variant: 'success',
-          action: (
-            <ToastAction altText="Login" onClick={() => navigate('/sign-in')}>
-              Login
-            </ToastAction>
-          ),
-        })
+  const handleSignUp = async (data: SignUpForm) => {
+    try {
+      await registerClinicFn({
+        email: data.email,
+        managerName: data.managerName,
+        phone: data.phone,
+        restaurantName: data.clinicName, // change to clinicName when the API is updated
       })
-      .catch(() => {
-        toast({
-          title: 'Erro ao criar nova clinica',
-          // description: 'Tente novamente mais tarde',
-          variant: 'destructive',
-          action: (
-            <ToastAction
-              altText="Tentar novamente"
-              onClick={() => handleSignUp(data)}
-            >
-              Tentar novamente
-            </ToastAction>
-          ),
-        })
+
+      toast({
+        title: 'Clínica cadastrada com sucesso!',
+        // description: 'Cheque seu e-mail para acessar o painel',
+        variant: 'success',
+        action: (
+          <ToastAction
+            altText="Login"
+            onClick={() => navigate(`/sign-in?email=${data.email}`)}
+          >
+            Login
+          </ToastAction>
+        ),
       })
+    } catch (e) {
+      toast({
+        title: 'Erro ao criar nova clinica',
+        // description: 'Tente novamente mais tarde',
+        variant: 'destructive',
+        action: (
+          <ToastAction
+            altText="Tentar novamente"
+            onClick={() => handleSignUp(data)}
+          >
+            Tentar novamente
+          </ToastAction>
+        ),
+      })
+    }
   }
 
   return (

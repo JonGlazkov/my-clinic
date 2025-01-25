@@ -1,8 +1,10 @@
+import { useMutation } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
 import { useForm } from 'react-hook-form'
-import { Link } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { z } from 'zod'
 
+import { registerClinic } from '@/api/sign-in'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -16,44 +18,52 @@ const signUpForm = z.object({
 type SignUpForm = z.infer<typeof signUpForm>
 
 export function SignIn() {
+  const [searchParams] = useSearchParams()
   const { toast } = useToast()
+
   const {
     register,
     handleSubmit,
     formState: { isSubmitting },
-  } = useForm<SignUpForm>()
+  } = useForm<SignUpForm>({
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+    },
+  })
+
+  const { mutateAsync: authenticate } = useMutation({
+    mutationFn: registerClinic,
+  })
 
   const handleSignUp = async (data: SignUpForm) => {
-    console.log(data)
+    try {
+      await authenticate({ email: data.email })
 
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-      .then(() => {
-        toast({
-          title: 'Enviamos um link de autenticação para o seu e-mail',
-          // description: 'Cheque seu e-mail para acessar o painel',
-          variant: 'success',
-          action: (
-            <ToastAction altText="Reenviar" onClick={() => handleSignUp(data)}>
-              Reenviar
-            </ToastAction>
-          ),
-        })
+      toast({
+        title: 'Enviamos um link de autenticação para o seu e-mail',
+        // description: 'Cheque seu e-mail para acessar o painel',
+        variant: 'success',
+        action: (
+          <ToastAction altText="Reenviar" onClick={() => handleSignUp(data)}>
+            Reenviar
+          </ToastAction>
+        ),
       })
-      .catch(() => {
-        toast({
-          title: 'Erro ao enviar link de autenticação',
-          // description: 'Tente novamente mais tarde',
-          variant: 'destructive',
-          action: (
-            <ToastAction
-              altText="Tentar novamente"
-              onClick={() => handleSignUp(data)}
-            >
-              Tentar novamente
-            </ToastAction>
-          ),
-        })
+    } catch (e) {
+      toast({
+        title: 'Erro ao enviar link de autenticação',
+        // description: 'Tente novamente mais tarde',
+        variant: 'destructive',
+        action: (
+          <ToastAction
+            altText="Tentar novamente"
+            onClick={() => handleSignUp(data)}
+          >
+            Tentar novamente
+          </ToastAction>
+        ),
       })
+    }
   }
 
   return (
