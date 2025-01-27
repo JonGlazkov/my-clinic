@@ -15,14 +15,27 @@ export interface GetConsultsResponse {
   }
 }
 
+// Change status for the correct type
+
 export interface GetConsultQuery {
   pageIndex?: number | null
+  orderId?: string | null
+  customerName?: string | null
+  status?: string | null
 }
 
-export async function getConsults({ pageIndex }: GetConsultQuery) {
+export async function getConsults({
+  pageIndex,
+  customerName,
+  orderId,
+  status,
+}: GetConsultQuery) {
   const response = await api.get<GetConsultsResponse>('/orders', {
     params: {
       pageIndex,
+      customerName,
+      orderId,
+      status,
     },
   })
 

@@ -24,9 +24,19 @@ export function Consults() {
     .transform((page) => page - 1)
     .parse(searchParams.get('page') ?? '1')
 
+  const orderId = searchParams.get('orderId')
+  const customerName = searchParams.get('customerName')
+  const status = searchParams.get('status')
+
   const { data: result } = useQuery({
-    queryKey: ['consults', pageIndex],
-    queryFn: () => getConsults({ pageIndex }),
+    queryKey: ['consults', pageIndex, orderId, customerName, status],
+    queryFn: () =>
+      getConsults({
+        pageIndex,
+        orderId,
+        customerName,
+        status: status === 'all' ? null : status,
+      }),
   })
 
   function handlePagination(pageIndex: number) {
