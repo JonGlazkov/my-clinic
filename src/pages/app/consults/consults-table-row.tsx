@@ -1,12 +1,23 @@
 import { ArrowRight, Search, X } from 'lucide-react'
 
+import { ConsultStatus } from '@/components/consult-status'
 import { Button } from '@/components/ui/button'
 import { Dialog, DialogTrigger } from '@/components/ui/dialog'
 import { TableCell, TableRow } from '@/components/ui/table'
 
 import ConsultsDetails from './consults-details'
 
-export default function ConsultsTableRow() {
+export interface ConsultsTableRowProps {
+  consult: {
+    orderId: string
+    createdAt: string
+    status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
+    customerName: string
+    total: number
+  }
+}
+
+export default function ConsultsTableRow({ consult }: ConsultsTableRowProps) {
   return (
     <TableRow>
       <TableCell>
@@ -18,27 +29,27 @@ export default function ConsultsTableRow() {
             </Button>
           </DialogTrigger>
 
-          <ConsultsDetails />
+          <ConsultsDetails consult={consult} />
         </Dialog>
       </TableCell>
       <TableCell className="font-mono text-xs font-medium">
-        a98fg97adts78a6sd8asd
+        {consult.orderId}
       </TableCell>
       {/* <TableCell className="text-muted-foreground">
                     há 15 minutos
                   </TableCell> */}
       <TableCell>
-        <div className="flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-slate-400" />
-          <span className="font-medium text-muted-foreground">Pendente</span>
-        </div>
+        <ConsultStatus status={consult.status} />
       </TableCell>
       <TableCell className="text-muted-foreground">12/08/2025</TableCell>
-      <TableCell className="font-medium">
-        Jonathan Ventura Macedo da Silva
-      </TableCell>
+      <TableCell className="font-medium">{consult.customerName}</TableCell>
       <TableCell className="font-medium">Dr Arnóbio Pacheco</TableCell>
-      <TableCell className="font-medium text-primary">R$ 459,90</TableCell>
+      <TableCell className="font-medium text-primary">
+        {consult.total.toLocaleString('pt-BR', {
+          style: 'currency',
+          currency: 'BRL',
+        })}
+      </TableCell>
       <TableCell>
         <Button variant="outline" size="xs">
           <ArrowRight className="mr-1 h-3 w-3" />

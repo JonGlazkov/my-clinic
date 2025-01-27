@@ -1,3 +1,6 @@
+import { formatDistanceToNow } from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+
 import {
   DialogContent,
   DialogDescription,
@@ -13,7 +16,17 @@ import {
   TableRow,
 } from '@/components/ui/table'
 
-export default function ConsultsDetails() {
+interface ConsultsDetailsProps {
+  consult: {
+    orderId: string
+    createdAt: string
+    status: 'pending' | 'canceled' | 'processing' | 'delivering' | 'delivered'
+    customerName: string
+    total: number
+  }
+}
+
+export default function ConsultsDetails({ consult }: ConsultsDetailsProps) {
   return (
     <DialogContent>
       <DialogHeader>
@@ -27,12 +40,10 @@ export default function ConsultsDetails() {
             <TableRow>
               <TableCell className="text-muted-foreground">Status</TableCell>
               <TableCell className="flex justify-end">
-                <div className="flex items-center gap-2">
-                  <span className="h-2 w-2 rounded-full bg-slate-400" />
-                  <span className="font-medium text-muted-foreground">
-                    Pendente
-                  </span>
-                </div>
+                {formatDistanceToNow(consult.createdAt, {
+                  locale: ptBR,
+                  addSuffix: true,
+                })}
               </TableCell>
             </TableRow>
 

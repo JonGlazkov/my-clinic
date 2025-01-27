@@ -1,5 +1,9 @@
+import { useQuery } from '@tanstack/react-query'
 import { Helmet } from 'react-helmet-async'
+import { useSearchParams } from 'react-router-dom'
+import { z } from 'zod'
 
+import { getConsults } from '@/api/get-consults'
 import { Pagination } from '@/components/pagination'
 import {
   Table,
@@ -13,6 +17,26 @@ import ConsultsTableFilter from './consults-table-filter'
 import ConsultsTableRow from './consults-table-row'
 
 export function Consults() {
+  const [searchParams, setSearchParams] = useSearchParams()
+
+  const pageIndex = z.coerce
+    .number()
+    .transform((page) => page - 1)
+    .parse(searchParams.get('page') ?? '1')
+
+  const { data: result } = useQuery({
+    queryKey: ['consults', pageIndex],
+    queryFn: () => getConsults({ pageIndex }),
+  })
+
+  function handlePagination(pageIndex: number) {
+    setSearchParams((state) => {
+      state.set('page', String(pageIndex + 1))
+
+      return state
+    })
+  }
+
   return (
     <>
       <Helmet title="Consultas" />
@@ -39,13 +63,21 @@ export function Consults() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {Array.from({ length: 10 }).map((_, index) => (
-                  <ConsultsTableRow key={index} />
-                ))}
+                {result &&
+                  result.orders.map((order) => (
+                    <ConsultsTableRow key={order.orderId} consult={order} />
+                  ))}
               </TableBody>
             </Table>
           </div>
-          <Pagination pageIndex={0} totalCount={105} perPage={10} />
+          {result && (
+            <Pagination
+              pageIndex={result.meta.pageIndex}
+              totalCount={result.meta.totalCount}
+              perPage={result.meta.perPage}
+              onPageChange={handlePagination}
+            />
+          )}
         </div>
       </div>
     </>
