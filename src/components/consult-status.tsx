@@ -1,5 +1,5 @@
 // type ConsultStatus = 'pending' | 'confirmed' | 'canceled' | 'completed'
-type ConsultStatus =
+export type ConsultStatus =
   | 'pending'
   | 'canceled'
   | 'processing'
